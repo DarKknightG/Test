@@ -21,6 +21,11 @@ app.listen(port, (req, res) => {
     console.log("listening to port 8080");
 });
 
+// Index route.
+app.get("/", (req, res) => {
+    res.send("School Management API is running.");
+});
+
 // Function to get the distance between two latitude and longitude
 const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the Earth in km
@@ -38,6 +43,8 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
 
 // Add School route
 app.post("/addSchool", (req, res) => {
+    const { name, address, latitude, longitude } = req.body;
+
     if (!name || !address || isNaN(latitude) || isNaN(longitude)) {
         return res
             .status(400)
@@ -45,7 +52,6 @@ app.post("/addSchool", (req, res) => {
     }
 
     console.log(req.body);
-    const { name, address, latitude, longitude } = req.body;
 
     const query =
         "INSERT INTO schools (name, address, latitude, longitude) VALUES (?,?,?,?)";
@@ -62,6 +68,8 @@ app.post("/addSchool", (req, res) => {
 
 // Route to show the list of schools.
 app.get("/listSchools", (req, res) => {
+    const { latitude, longitude } = req.query;
+
     if (!latitude || !longitude || isNaN(latitude) || isNaN(longitude)) {
         return res.status(400).json({
             error:
@@ -69,7 +77,8 @@ app.get("/listSchools", (req, res) => {
         });
     }
 
-    const { latitude, longitude } = req.query;
+    const userLat = parseFloat(latitude);
+    const userLon = parseFloat(longitude);
 
     const query = "SELECT * FROM Schools";
     connection.query(query, (err, result) => {
