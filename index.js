@@ -51,8 +51,6 @@ app.post("/addSchool", (req, res) => {
             .json({ error: "All fields are required and must be valid" });
     }
 
-    console.log(req.body);
-
     const query =
         "INSERT INTO schools (name, address, latitude, longitude) VALUES (?,?,?,?)";
 
